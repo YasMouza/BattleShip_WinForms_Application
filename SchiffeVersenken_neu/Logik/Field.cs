@@ -154,8 +154,6 @@ namespace SchiffeVersenken_neu.Logik
             int rowRandom = random.Next(0, 5);
             int columnRandom = random.Next(0, 5);
 
-
-
             var shipDirection = ShipDirection.Oben;
             if (shipDirectionRandom == 0)
             {
@@ -233,24 +231,19 @@ namespace SchiffeVersenken_neu.Logik
                 default:
                     throw new NotImplementedException($"Die Richtung {nameof(direction)} wurde noch nicht implementiert"); 
             }
-
             if (outerBound)
             {
                 MessageBox.Show("Koordinate liegt außerhalb des Spielfeldes");
             }
-
             return outerBound;
-
         }
-
 
 
 
         private bool SindKoordinatenBesetzt(Coordinates coordinates, int shipSize, ShipDirection direction)
         {
             int counter = 0;
-            var sindBesetzt = false;
-            
+            var sindBesetzt = false;            
             while (!sindBesetzt && counter < shipSize)
             {                
                 if (direction == ShipDirection.Links)
