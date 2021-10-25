@@ -192,7 +192,7 @@ namespace SchiffeVersenken_neu.Logik
             var ret = false;
             var coordinate = ConvertShipToCoords(row, column);
 
-            if (!LiegenKoordinatenAusserhalb(coordinate, shipSize, direction) && !SindKoordinatenBesetzt(coordinate, shipSize, direction))
+            if (!IstKoordinateAusserhalb(coordinate, shipSize, direction) && !SindKoordinatenBesetzt(coordinate, shipSize, direction))
             {
                 if (Ship.GetShips().Count <= 3)
                 {
@@ -213,14 +213,13 @@ namespace SchiffeVersenken_neu.Logik
             return coordinates;
         }
 
-        private bool LiegenKoordinatenAusserhalb(Coordinates coordinate, int shipSize, ShipDirection direction)
+        private bool IstKoordinateAusserhalb(Coordinates coordinate, int shipSize, ShipDirection direction)
         {
             bool outerBound;
-
             switch (direction)
             {
                 case ShipDirection.Oben:
-                    outerBound = (coordinate.XCoordinate + shipSize) < 0;
+                    outerBound = (coordinate.XCoordinate + shipSize) < 0; 
                     break;
                 case ShipDirection.Unten:
                     outerBound = (coordinate.XCoordinate - shipSize) > felder.GetLength(0);
@@ -232,16 +231,20 @@ namespace SchiffeVersenken_neu.Logik
                     outerBound = (coordinate.YCoordinate - shipSize) < 0;
                     break;
                 default:
-                    throw new NotImplementedException($"Die Richtung {nameof(direction)} wurde noch nicht implementiert");                    
-            }            
+                    throw new NotImplementedException($"Die Richtung {nameof(direction)} wurde noch nicht implementiert"); 
+            }
 
             if (outerBound)
-            {                
-                MessageBox.Show("Koordinate liegt außerhalb des Feldes");
+            {
+                MessageBox.Show("Koordinate liegt außerhalb des Spielfeldes");
             }
 
             return outerBound;
+
         }
+
+
+
 
         private bool SindKoordinatenBesetzt(Coordinates coordinates, int shipSize, ShipDirection direction)
         {
@@ -268,7 +271,6 @@ namespace SchiffeVersenken_neu.Logik
                 }
                 counter++;
             }
-
             return sindBesetzt;
         }
 
