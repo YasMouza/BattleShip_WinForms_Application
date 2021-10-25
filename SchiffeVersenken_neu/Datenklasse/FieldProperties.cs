@@ -10,14 +10,8 @@ namespace SchiffeVersenken_neu.Datenklasse
 {                                           
     public class FieldProperties
     {
-        public FieldProperties(bool ShipIsHit, bool ShipIsSet, bool FieldIsHit)
-        {
-            this.ShipIsHit = ShipIsHit;
-            this.ShipIsSet = ShipIsSet;
-            this.FieldIsHit = FieldIsHit;
-        }
-        public bool ShipIsSet = false;
-        public bool FieldIsHit = false;
-        public bool ShipIsHit = false;
+        public bool ShipIsSet;
+        public bool FieldIsHit;
+        public bool ShipIsHit;
     }
 }

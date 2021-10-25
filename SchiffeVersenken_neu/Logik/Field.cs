@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,166 +8,151 @@ using System.Windows.Forms;
 using SchiffeVersenken_neu;
 using SchiffeVersenken_neu.Datenklasse;
 
+
+
 namespace SchiffeVersenken_neu.Logik
 {
     public class Field
     {
         static Random random = new Random();
-        private FieldData[,] playerField = new FieldData[6, 6];
-        private FieldData[,] computerField = new FieldData[6, 6];
+        public FieldData[,] felder;
 
+        int Row;
+        int Column;
+        Coordinates coordinate;
+        private bool ShipIsSet;
+        int shipSize;
+        private int shipIndex;
+        public string testErgebnis = string.Empty;
 
-        public Field(Button[,] buttons, bool player)
+        public Field(int reihenAnzahl, int spaltenAnzahl)
         {
-            CreateField(buttons, player);
-        }
-
-
-
-        public FieldData[,] FieldArray()
-        {
-            return playerField;
+            //coordinate.xCoordinate = 0;
+            //coordinate.yCoordinate = 0;
             
-        }
-
-        public void CreateField(Button[,] buttons, bool player)
-        {
-            int iX = 0;
-            int iY = 0;
-            if (player)
+            felder = new FieldData[reihenAnzahl, spaltenAnzahl];
+            for (int xCoordinate = 0; xCoordinate < 6; xCoordinate++)
             {
-                string playerCoord = buttons[iX, iY].Text;
-                for (iX = 0; iX < playerField.GetLength(0); iX++)
+                for (int yCoordinate = 0; yCoordinate < 6; yCoordinate++)
                 {
-                    for (iY = 0; iY < playerField.GetLength(1); iY++)
-                    {
-                        playerCoord = buttons[iX, iY].Text;
-                        playerField[iX, iY] = new FieldData(playerCoord, player);
-                    }
-                }
-            }
-            else
-            {
-                string coord = buttons[iX, iY].Text;
-                for (iX = 0; iX < computerField.GetLength(0); iX++)
-                {
-                    for (iY = 0; iY < computerField.GetLength(1); iY++)
-                    {
-                        coord = buttons[iX, iY].Text;
-                        computerField[iX, iY] = new FieldData(coord, player);
-                    }
+                    felder[xCoordinate, yCoordinate] = new FieldData();                    
                 }
             }
         }
 
-
-        private bool AllPlayerShipsSunk() //Schiff überall getroffen = gesunken
+        public static int AddVal(int a, int b)
         {
-            bool shipSunk = false;
-            var shipList = Ship.GetShipsPlayer();         
-            foreach (ShipData ship in shipList)
-            {
-                shipSunk = false;
-                if (ship.IsShipSunk)
-                {
-                    shipSunk = true;
-                    MessageBox.Show("Dein Schiff wurde versenkt");
-                }
-            }
-            return shipSunk;
+            return a + b;
         }
 
-        private bool AllComputerShipsSunk()
+        public FieldData[,] GetFieldArray()
         {
-            //1.Variante
-            bool shipSunk = false;
-            var shipList = Ship.GetShipsComputer();
-            foreach (ShipData ship in shipList)
-            {
-                shipSunk = false;
-                if (ship.IsShipSunk)
-                {
-                    shipSunk = true;
-                    MessageBox.Show("Gegnerisches Schiff versenkt");
-                }
-            }
-            return shipSunk;
-
-            //2.Variante
-
-            //bool IsShipSunk = false;
-            //foreach (ShipData ship in shipList)
-            //{
-            //    while (computerField[iX, iY].ShipIsHit == true)
-            //    {
-            //        IsShipSunk = true;
-            //        MessageBox.Show("gegnerisches Schiff versenkt!");
-            //    }
-
-
-            //}
-            //return IsShipSunk;
+            return felder;
         }
 
-
-        public void FireComputersShip(int xCoordinate, int yCoordinate) //Schiffe des Computers wird angegriffen
+        public void ComputerAngreifen(Coordinates coordinate) 
         {
-            
-            if (!(AllComputerShipsSunk()))
+            //Messagebox disablen für unit Tests 
+            if (GetFieldArray()[coordinate.XCoordinate, coordinate.YCoordinate].ShipIsSet)
             {
-                if (xCoordinate >= 0 && xCoordinate < 6 && yCoordinate >= 0 && yCoordinate < 6)
-                {                    
-                    if (computerField[xCoordinate, yCoordinate].ShipIsSet == true)
-                    {
-                        computerField[xCoordinate, yCoordinate].ShipIsHit = true;
-                        MessageBox.Show("Du hast getroffen");
-                    }
-                    else if (computerField[xCoordinate, yCoordinate].FieldIsHit == true)
-                    {
-                        computerField[xCoordinate, yCoordinate].FieldIsHit = true;
-                        //MessageBox.Show("Schiff verfehlt");
-                    }
-                }
+                felder[coordinate.XCoordinate, coordinate.YCoordinate].ShipIsHit = true;
+                testErgebnis = "Du hast getroffen";
+                MessageBox.Show("Du hast getroffen");
             }
-            else
+            else if (!GetFieldArray()[coordinate.XCoordinate, coordinate.YCoordinate].ShipIsSet)
             {
-                MessageBox.Show("Spiel gewonnen");
+                testErgebnis = "Schiff verfehlt";
+                MessageBox.Show("Schiff verfehlt");
             }
-        }
-        public void SpielerAngreifen()
-        {
-            if (!(AllPlayerShipsSunk()))
+            if (SpielGewonnen())
             {
-                int xCoordinate, yCoordinate;
-                xCoordinate = random.Next(0, 6);
-                yCoordinate = random.Next(0, 6);
-                if (xCoordinate >= 0 && xCoordinate < 6 && yCoordinate >= 0 && yCoordinate < 6)
-                {
-                    if (playerField[xCoordinate, yCoordinate].ShipIsSet == true)
-                    {
-                        playerField[xCoordinate, yCoordinate].ShipIsHit = true;
-                        MessageBox.Show("Du wurdest getroffen");
-                    }
-                    else
-                    {
-                        playerField[xCoordinate, yCoordinate].FieldIsHit = true;
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Spiel verloren");
+                testErgebnis = "Du hast gewonnen";
+                MessageBox.Show("Du hast gewonnen", "Gewonnen");
             }
         }
 
+        public bool SpielGewonnen()
+        {
+            bool allShipsSunk = true;                
+
+            if (Ship.GetShips().Count <= 3)
+            {
+                for (int iX = 0; iX < felder.GetLength(0); iX++)
+                {
+                    for (int iY = 0; iY < felder.GetLength(1); iY++)
+                    {
+                        if (felder[iX, iY].ShipIsSet && !felder[iX, iY].ShipIsHit)
+                        {
+                            allShipsSunk = false;
+                        }                        
+                    }
+                }               
+                
+            }
+            return allShipsSunk;
+        }
+
+        public bool SpielVerloren()
+        {
+            bool allShipsSunk = true;
+            if (Ship.GetShips().Count <= 3)
+            {
+                for (int iX = 0; iX < felder.GetLength(0); iX++)
+                {
+                    for (int iY = 0; iY < felder.GetLength(1); iY++)
+                    {
+                        if (felder[iX, iY].ShipIsSet && !felder[iX, iY].ShipIsHit)
+                        {
+                            allShipsSunk = false;
+                        }
+                    }
+                }
+            }
+            return allShipsSunk;
+        }
+
+        public bool BeendeSpiel(Coordinates coordinates)
+        {
+            bool spielBeendet = false;
+            if (spielBeendet = true)
+            {
+                felder[coordinates.XCoordinate, coordinates.YCoordinate].FieldIsHit = true;
+                felder[coordinates.XCoordinate, coordinates.YCoordinate].ShipIsHit = true;
+                felder[coordinates.XCoordinate, coordinates.YCoordinate].ShipIsSet = true;
+
+            }return spielBeendet;
+        }
+
+        public void SpielerAngreifen(int xCoordinate, int yCoordinate, int shipSize, Coordinates coordinate)
+        {
+            xCoordinate = random.Next(0, 6);
+            yCoordinate = random.Next(0, 6);
+            if (xCoordinate >= 0 && xCoordinate < 6 && yCoordinate >= 0 && yCoordinate < 6) //ohne .FieldIsHit möglich?
+            {
+                if (felder[xCoordinate, yCoordinate].ShipIsSet)
+                {
+                    felder[xCoordinate, yCoordinate].ShipIsHit = true;
+                    MessageBox.Show("Du wurdest getroffen");
+                }
+                else
+                {
+                    felder[xCoordinate, yCoordinate].FieldIsHit = true;
+                }
+            }
+            if (SpielVerloren())
+            {
+                MessageBox.Show("Alle deine Schiffe wurden versenkt", "verloren");
+
+            }
+        }
 
         public void SetComputerShip()
         {
             
-            int shipSizeRandom = random.Next(3, 4);
+            int shipSizeRandom = random.Next(2, 4);
             var shipDirectionRandom = random.Next(0, 3);
-            int rowRandom = random.Next(0, 6);
-            int columnRandom = random.Next(0, 6);
+            int rowRandom = random.Next(0, 5);
+            int columnRandom = random.Next(0, 5);
             var shipDirection = ShipDirection.Oben;
             if (shipDirectionRandom == 0)
             {
@@ -181,221 +166,137 @@ namespace SchiffeVersenken_neu.Logik
             {
                 shipDirection = ShipDirection.Unten;
             }
-            bool player = false;
-            SetShip(computerField, shipSizeRandom, shipDirection, rowRandom, columnRandom, player);                                   
-        }
+            
+            TrySetShip(shipSizeRandom, shipDirection, rowRandom, columnRandom);
+            bool ShipIsSet = false;
+            while (ShipIsSet == false)
+            {                
 
-        public void SetShip(FieldData[,] fieldArray, int shipSize, ShipDirection direction, int row, int column, bool player)
-        {
-            var coordinate = ConvertShipToCoords(shipSize, direction, row, column);
-
-
-            if (KoordinateAusserhalb(fieldArray, shipSize, direction, row, column))
-            {
                 try
                 {
-
+                    TrySetShip(shipSizeRandom, shipDirection, rowRandom, columnRandom);
+                    ShipIsSet = true;
                 }
                 catch (Exception)
                 {
 
-                    throw;
-                }
-            }
-            else if (KoordinateBesetzt(fieldArray, shipSize, direction, row, column))
-            {
-                try
-                {
-
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
-            }
-            else
-            {
-                
-                if (player && Ship.GetShipsPlayer().Count <= 3)
-                {
-                    Ship.SetShip(new ShipData(shipSize, column, row, direction), player);
-                    PlaceShipsInGrid(fieldArray, shipSize, direction, row, column);
-                }
-                
-                if (!player && Ship.GetShipsComputer().Count <= 3)
-                {
-                    Ship.SetShip(new ShipData(shipSize, column, row, direction), player);
-                    PlaceShipsInGrid(fieldArray, shipSize, direction, row, column);
+                    ShipIsSet = false;
                 }
             }
         }
 
-        public ShipData ConvertShipToCoords(int shipSize, ShipDirection direction, int startrow, int startcolumn)
+        public bool TrySetShip(int shipSize, ShipDirection direction, int row, int column)
         {
-            ShipData ship = new ShipData(shipSize, startrow, startcolumn, direction);
-            return ship;
+            var ret = false;
+            var coordinate = ConvertShipToCoords(row, column);
+
+            if (!KoordinatenAusserhalb(coordinate, shipSize, direction) && !KoordinatenBesetzt(coordinate, shipSize, direction))
+            {
+                if (Ship.GetShips().Count <= 3)
+                {
+                    PlaceShipsInGrid(shipSize, direction, row, column);
+                    ret = true;
+                }
+            }            
+            return ret;
         }
 
-        private bool KoordinateAusserhalb(FieldData[,] fieldArray, int shipSize, ShipDirection direction, int row, int column)
+        public Coordinates ConvertShipToCoords(int XCoordinate, int YCoordinate)
         {
-            var coordinate = ConvertShipToCoords(shipSize, direction, row, column);
+            Coordinates coordinates = new Coordinates()
+            {
+                XCoordinate = XCoordinate,
+                YCoordinate = YCoordinate
+            };
+            return coordinates;
+        }
+
+        private bool KoordinatenAusserhalb(Coordinates coordinate, int shipSize, ShipDirection direction)
+        {            
+            int xStart = 0, xEnd = felder.GetLength(0), yStart = 0, yEnd = felder.GetLength(1);
+            
             bool outerBound = false;
-            try
+            
+            if (direction == ShipDirection.Oben)
             {
-                for (int iX = 0; iX < fieldArray.GetLength(0); iX++)
-                {
-                    for (int iY = 0; iY < fieldArray.GetLength(1); iY++)
-                    {
-                        if (row > 6 || row < 0 || column > 6 || column < 0 || shipSize > fieldArray.GetLength(0) || shipSize > fieldArray.GetLength(1))
-                        {
-                            outerBound = true;
-                        }
-                        else if (direction == ShipDirection.Links && shipSize > column + 1)
-                        {
-                            outerBound = true;
-                        }
-                        else if (direction == ShipDirection.Rechts && shipSize + column >= 7)
-                        {
-                            outerBound = true;
-                        }
-                        else if (direction == ShipDirection.Oben && shipSize > row + 1)
-                        {
-                            outerBound = true;
-                        }
-                        else if (direction == ShipDirection.Unten && shipSize + row >= 7)
-                        {
-                            outerBound = true;
-                        }
-                    }
-                }
-
+                xStart = xStart + (shipSize - 1);
             }
-            catch (ArgumentException)
+            else if (direction == ShipDirection.Unten)
             {
-
+                xEnd = xEnd - (shipSize - 1);
+            }
+            else if (direction == ShipDirection.Rechts)
+            {
+                yEnd = yEnd - (shipSize - 1);
+            }
+            else if (direction == ShipDirection.Links)
+            {
+                yStart = yStart + (shipSize - 1);
+            }
+            if (!(coordinate.XCoordinate >= xStart && coordinate.XCoordinate <= xEnd && coordinate.YCoordinate >= yStart && coordinate.YCoordinate <= yEnd))
+            {
+                outerBound = true;
                 MessageBox.Show("Koordinate liegt außerhalb des Feldes");
             }
-            
             return outerBound;
         }
-        private bool KoordinateBesetzt(FieldData[,] fieldArray, int shipSize, ShipDirection direction, int row, int column)
+
+        private bool KoordinatenBesetzt(Coordinates coordinates, int shipSize, ShipDirection direction)
         {
-            bool contains = false;
-            var coordinate = ConvertShipToCoords(shipSize, direction, row, column);
-            try
-            {
-                for (int iX = 0; iX < fieldArray.GetLength(0); iX++)
+            int counter = 0;
+            var besetzt = false;
+            //return felder[coordinates.XCoordinate, coordinates.YCoordinate].ShipIsSet;
+            while (!besetzt && counter < shipSize)
+            {                
+                if (direction == ShipDirection.Links)
                 {
-                    for (int iY = 0; iY < fieldArray.GetLength(1); iY++)
-                    {
-                        while (shipSize > 0)
-                        {
-                            shipSize--;
-                            if (direction == ShipDirection.Links)
-                            {
-                                if (fieldArray[row, column - 1].ShipIsSet == true)
-                                {
-                                    contains = true;
-                                }
-                            }
-                            else if (direction == ShipDirection.Rechts)
-                            {
-                                if (fieldArray[row, column + 1].ShipIsSet)
-                                {
-                                    contains = true;
-                                }
-                            }
-                            else if (direction == ShipDirection.Oben)
-                            {
-                                if (fieldArray[row - 1, column].ShipIsSet)
-                                {
-                                    contains = true;
-                                }
-                            }
-                            else if (direction == ShipDirection.Unten)
-                            {
-                                if (fieldArray[row + 1, column].ShipIsSet)
-                                {
-                                    contains = true;
-                                }
-                            }
-                        }
-                    }
+                    besetzt = felder[coordinates.XCoordinate, coordinates.YCoordinate - counter].ShipIsSet;
                 }
-
+                else if (direction == ShipDirection.Rechts)
+                {
+                    besetzt = felder[coordinates.XCoordinate, coordinates.YCoordinate + counter].ShipIsSet;
+                }
+                else if (direction == ShipDirection.Oben)
+                {
+                    besetzt = felder[coordinates.XCoordinate - counter, coordinates.YCoordinate].ShipIsSet;
+                }
+                else if (direction == ShipDirection.Unten)
+                {
+                    besetzt = felder[coordinates.XCoordinate + counter, coordinates.YCoordinate].ShipIsSet;
+                }
+                counter++;
             }
-            catch (ArgumentException)
-            {
-                MessageBox.Show("Feld kann nur einmal besetzt werden");                
-            }
-            
-            return contains;
-
+            return besetzt;
         }
 
-
-        // feld mit schiff besetzen wenn koordinaten innerhalb des feldes, dann prüfen ob nach links oder rechts demenentsprechend spalte--, solagen bis shipsize größer 0
-        private void PlaceShipsInGrid(FieldData[,] fieldArray, int shipSize, ShipDirection direction, int startrow, int startcolumn)
+        public void PlaceShipsInGrid(int shipSize, ShipDirection direction, int Row, int Column)
         {
-            for (int iX = 0; iX < fieldArray.GetLength(0); iX++)
+            var coordinate = ConvertShipToCoords(Row, Column);
+            if (shipSize <= 1 && KoordinatenAusserhalb(coordinate, shipSize, direction))
             {
-                for (int iY = 0; iY < fieldArray.GetLength(1); iY++)
-                {
-                    fieldArray[startrow, startcolumn].ShipIsSet = true;
-
-                    if (shipSize <= 1)
-                    {
-                        return;
-                    }
-                    while (shipSize > 1)
-                    {
-                        shipSize--;
-                        if (direction == ShipDirection.Links ||
-                            direction == ShipDirection.Rechts &&
-                            !(KoordinateAusserhalb(fieldArray, shipSize, direction, startrow, startcolumn - 1)))
-                        {
-                            if (direction == ShipDirection.Links)
-                            {
-                                fieldArray[startrow, startcolumn - 1].ShipIsSet = true;
-                                startcolumn--;
-                            }
-                            else if (direction == ShipDirection.Rechts)
-                            {
-                                fieldArray[startrow, startcolumn + 1].ShipIsSet = true;
-                                startcolumn++;
-                            }
-                        }
-                        else if (direction == ShipDirection.Oben ||
-                            direction == ShipDirection.Unten &&
-                            !(KoordinateAusserhalb(fieldArray, shipSize, direction, startrow - 1, startcolumn)))
-                        {
-                            if (direction == ShipDirection.Oben)
-                            {
-                                if (startrow - 1 == 0)
-                                {
-                                    fieldArray[startrow - 1, startcolumn].ShipIsSet = true;
-                                }
-                                else
-                                {
-                                    fieldArray[startrow - 1, startcolumn].ShipIsSet = true;
-                                    startrow--;
-                                }
-
-                            }
-                            else
-                            {
-                                fieldArray[startrow + 1, startcolumn].ShipIsSet = true;
-                                startrow++;
-                            }
-                        }
-                    }                    
-                }
+                return;
             }
-        }
-        public void Reset()
-        {
-
+            while (shipSize >= 1)                
+            {
+                felder[Row, Column].ShipIsSet = true;
+                if (direction == ShipDirection.Links)
+                {                    
+                    Column--;
+                }
+                else if (direction == ShipDirection.Rechts)
+                {                    
+                    Column++;
+                }
+                else if (direction == ShipDirection.Oben)
+                {                    
+                    Row--;
+                }               
+                else
+                {                    
+                    Row++;
+                }
+                shipSize--;
+            }
         }
     }
 }

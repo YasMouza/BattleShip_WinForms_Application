@@ -11,9 +11,20 @@ namespace SchiffeVersenken_neu.Logik
 {
     public class Ship
     {
+        
+        private static List<ShipData> placeShips = new List<ShipData>();
+        
+
+        public static List<ShipData> GetShips()
+        {
+            return placeShips;
+        }
+
+
         private static List<ShipData> shipsPlayerList = new List<ShipData>();
         private static List<ShipData> shipsComputerList = new List<ShipData>();
-        public static void SetShip(ShipData shipData, bool player)
+
+        public static void TrySetShip(int shipSize, ShipData shipData, bool player)
         {
             if (player)
             {
@@ -25,6 +36,8 @@ namespace SchiffeVersenken_neu.Logik
                 shipsComputerList.Add(shipData);
             }
         }
+
+
         public static List<ShipData> GetShipsPlayer()
         {
             return shipsPlayerList;

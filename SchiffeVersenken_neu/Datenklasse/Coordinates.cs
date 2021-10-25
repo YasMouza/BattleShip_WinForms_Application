@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace SchiffeVersenken_neu.Datenklasse
 {
-    class Coordinates
+    public class Coordinates
     {
+        public int XCoordinate { get; set; } 
+        public int YCoordinate { get; set; }
+
+
     }
 }

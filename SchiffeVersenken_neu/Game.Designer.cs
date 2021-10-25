@@ -109,11 +109,14 @@ namespace SchiffeVersenken_neu
             this.label4 = new System.Windows.Forms.Label();
             this.AngriffsKoordinate = new System.Windows.Forms.Label();
             this.Attack = new System.Windows.Forms.Button();
-            this.sizeBox = new System.Windows.Forms.ComboBox();
             this.directionBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.startGameButton = new System.Windows.Forms.Button();
             this.ResetGameButton = new System.Windows.Forms.Button();
+            this.LosGehtsButton = new System.Windows.Forms.Button();
+            this.sizeBox = new System.Windows.Forms.ComboBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -470,7 +473,7 @@ namespace SchiffeVersenken_neu
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(28, 434);
+            this.label3.Location = new System.Drawing.Point(28, 459);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(87, 17);
             this.label3.TabIndex = 41;
@@ -838,18 +841,6 @@ namespace SchiffeVersenken_neu
             this.Attack.UseVisualStyleBackColor = true;
             this.Attack.Click += new System.EventHandler(this.Attack_Click);
             // 
-            // sizeBox
-            // 
-            this.sizeBox.FormattingEnabled = true;
-            this.sizeBox.Items.AddRange(new object[] {
-            "2",
-            "3",
-            "4"});
-            this.sizeBox.Location = new System.Drawing.Point(180, 389);
-            this.sizeBox.Name = "sizeBox";
-            this.sizeBox.Size = new System.Drawing.Size(121, 24);
-            this.sizeBox.TabIndex = 82;
-            // 
             // directionBox
             // 
             this.directionBox.FormattingEnabled = true;
@@ -858,7 +849,7 @@ namespace SchiffeVersenken_neu
             "Unten",
             "Rechts",
             "Links"});
-            this.directionBox.Location = new System.Drawing.Point(180, 434);
+            this.directionBox.Location = new System.Drawing.Point(180, 459);
             this.directionBox.Name = "directionBox";
             this.directionBox.Size = new System.Drawing.Size(121, 24);
             this.directionBox.TabIndex = 83;
@@ -867,16 +858,17 @@ namespace SchiffeVersenken_neu
             // 
             this.groupBox1.BackgroundImage = global::SchiffeVersenken_neu.Properties.Resources.Battleship_logo;
             this.groupBox1.Controls.Add(this.startGameButton);
-            this.groupBox1.Location = new System.Drawing.Point(-12, 1);
+            this.groupBox1.Location = new System.Drawing.Point(1, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(940, 487);
+            this.groupBox1.Size = new System.Drawing.Size(970, 562);
             this.groupBox1.TabIndex = 84;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
+            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter_1);
             // 
             // startGameButton
             // 
-            this.startGameButton.Location = new System.Drawing.Point(380, 220);
+            this.startGameButton.Location = new System.Drawing.Point(396, 224);
             this.startGameButton.Name = "startGameButton";
             this.startGameButton.Size = new System.Drawing.Size(135, 69);
             this.startGameButton.TabIndex = 0;
@@ -886,7 +878,7 @@ namespace SchiffeVersenken_neu
             // 
             // ResetGameButton
             // 
-            this.ResetGameButton.Location = new System.Drawing.Point(683, 382);
+            this.ResetGameButton.Location = new System.Drawing.Point(762, 389);
             this.ResetGameButton.Name = "ResetGameButton";
             this.ResetGameButton.Size = new System.Drawing.Size(99, 49);
             this.ResetGameButton.TabIndex = 1;
@@ -894,14 +886,54 @@ namespace SchiffeVersenken_neu
             this.ResetGameButton.UseVisualStyleBackColor = true;
             this.ResetGameButton.Click += new System.EventHandler(this.ResetGameButton_Click);
             // 
+            // LosGehtsButton
+            // 
+            this.LosGehtsButton.BackColor = System.Drawing.Color.LightBlue;
+            this.LosGehtsButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.LosGehtsButton.Location = new System.Drawing.Point(461, 382);
+            this.LosGehtsButton.Name = "LosGehtsButton";
+            this.LosGehtsButton.Size = new System.Drawing.Size(75, 49);
+            this.LosGehtsButton.TabIndex = 85;
+            this.LosGehtsButton.Text = "Los geht\'s";
+            this.LosGehtsButton.UseVisualStyleBackColor = false;
+            this.LosGehtsButton.Click += new System.EventHandler(this.LosGehtsButton_Click);
+            // 
+            // sizeBox
+            // 
+            this.sizeBox.FormattingEnabled = true;
+            this.sizeBox.Items.AddRange(new object[] {
+            "2",
+            "3",
+            "4"});
+            this.sizeBox.Location = new System.Drawing.Point(180, 395);
+            this.sizeBox.Name = "sizeBox";
+            this.sizeBox.Size = new System.Drawing.Size(121, 24);
+            this.sizeBox.TabIndex = 90;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(347, 327);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(51, 22);
+            this.textBox1.TabIndex = 91;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(420, 327);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(51, 22);
+            this.textBox2.TabIndex = 92;
+            // 
             // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(915, 485);
+            this.ClientSize = new System.Drawing.Size(948, 561);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.directionBox);
             this.Controls.Add(this.sizeBox);
+            this.Controls.Add(this.LosGehtsButton);
+            this.Controls.Add(this.directionBox);
             this.Controls.Add(this.Attack);
             this.Controls.Add(this.AngriffsKoordinate);
             this.Controls.Add(this.label4);
@@ -983,9 +1015,10 @@ namespace SchiffeVersenken_neu
             this.Controls.Add(this.B1);
             this.Controls.Add(this.A1);
             this.Controls.Add(this.ResetGameButton);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBox2);
             this.Name = "Game";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Game_Load);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1074,11 +1107,14 @@ namespace SchiffeVersenken_neu
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label AngriffsKoordinate;
         private System.Windows.Forms.Button Attack;
-        private System.Windows.Forms.ComboBox sizeBox;
         private System.Windows.Forms.ComboBox directionBox;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button startGameButton;
         private System.Windows.Forms.Button ResetGameButton;
+        private System.Windows.Forms.Button LosGehtsButton;
+        private System.Windows.Forms.ComboBox sizeBox;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }
 
