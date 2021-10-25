@@ -12,7 +12,6 @@ namespace SchiffeVersenken_neu.Datenklasse
 {
     public class FieldData
     {
-
         public bool ShipIsSet { get; set; }
         public bool ShipIsHit { get; set; }
         public bool FieldIsHit { get; set; }

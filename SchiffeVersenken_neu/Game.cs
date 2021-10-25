@@ -154,7 +154,7 @@ namespace SchiffeVersenken_neu
             currentButtonPlayer = sender as Button;
             GewaehlterButton.Text = currentButtonPlayer.Text;
 
-            
+
             //for (int iX = 0; iX < playerField.GetFieldArray().GetLength(0); iX++)
             //{
             //    for (int iY = 0; iY < playerField.GetFieldArray().GetLength(1); iY++)
@@ -165,45 +165,31 @@ namespace SchiffeVersenken_neu
             //        //    XCoordinate = row,
             //        //    YCoordinate = column
             //        //};
-                    
+
             //        //textBox1.Text = row.ToString();
             //        //textBox2.Text = column.ToString();
             //        ////textBox1.Text = BoardPlayerButton[iX, iY].ToString();
             //        ////textBox1.Text = playerField.GetFieldArray()[iX, iY].ToString();
             //    }
-            //}           
+            //}          
 
         }
 
         public void SetzeSpielerSchiffe()
         {
-            
-            if (sizeBox.Text != null && directionBox.Text != null && GewaehlterButton.Text != null)
+            var direction = (ShipDirection)Enum.Parse(typeof(ShipDirection), directionBox.Text);
+            if (TryFindeCoordinatesOfButton(direction, out Coordinates coordinates))
             {
-                var direction = (ShipDirection)Enum.Parse(typeof(ShipDirection), directionBox.Text); 
-                if (TryFindeCoordinatesOfButton(direction, out Coordinates coordinates))
+                if (playerField.TrySetShip(Int16.Parse(sizeBox.Text), direction, coordinates.XCoordinate, coordinates.YCoordinate))
                 {
-                    if (playerField.TrySetShip(Int16.Parse(sizeBox.Text), direction, coordinates.XCoordinate, coordinates.YCoordinate))
-                    {
-                        MarkiereFieldPlayer();
-                        SetShipComputer();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Schiff darf hier nicht gesetzt werden");
-                    }
+                    MarkiereFieldPlayer();
+                    SetShipComputer();
                 }
-                //else
-                //{
-                //    MessageBox.Show("Die Koordinaten konnten nicht gefunden werden");
-                //}
-            }
-            else
-            {
-                MessageBox.Show("Bitte gebe alle notwendigen Informationen ein, um dein Schiff zu platzieren");
-
-            }
-
+                else
+                {
+                    MessageBox.Show("Schiff darf hier nicht gesetzt werden");
+                }
+            }           
         }
 
         private bool TryFindeCoordinatesOfButton(ShipDirection direction, out Coordinates coordinates)
@@ -234,21 +220,16 @@ namespace SchiffeVersenken_neu
 
         private void SetzeSchiffeButton_Click(object sender, EventArgs e)
         {
-            SetzeSpielerSchiffe();
-            //SchiffsAuswahl();
-            try
+            if (GewaehlterButton.Text != null && sizeBox.Text != null && directionBox.Text != null)
             {
-                _ = GewaehlterButton.Text == null;
-            }
-            catch (Exception)
-            {
-
-                MessageBox.Show("Bitte wähle einen Startpunkt, um Schiff zu setzen");
-            }
-            if (sizeBox.SelectedIndex == 0 || sizeBox.SelectedIndex == 1 || sizeBox.SelectedIndex == 2)
-            {
+                SetzeSpielerSchiffe();
                 sizeBox.Items.Remove(sizeBox.SelectedItem);
             }
+            else
+            {
+                MessageBox.Show("Bitte gebe alle notwendigen Informationen ein, um dein Schiff zu platzieren");
+            }           
+            
         }
 
         public void SetShipComputer()
@@ -382,7 +363,7 @@ namespace SchiffeVersenken_neu
 
         public void ResetGameButton_Click(object sender, EventArgs e)
         {
-             
+
             if (MessageBox.Show("Do you want to reset the game?", "Reset Game",
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
@@ -391,7 +372,7 @@ namespace SchiffeVersenken_neu
                 BoardComputerButton[xCoordinate, yCoordinate].BackColor = Color.Transparent;
                 BoardPlayerButton[xCoordinate, yCoordinate].BackColor = Color.Transparent;
                 ResetGame();
-                Application.Restart(); 
+                Application.Restart();
             }
         }
 

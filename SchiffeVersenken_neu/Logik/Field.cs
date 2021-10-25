@@ -153,6 +153,9 @@ namespace SchiffeVersenken_neu.Logik
             var shipDirectionRandom = random.Next(0, 3);
             int rowRandom = random.Next(0, 5);
             int columnRandom = random.Next(0, 5);
+
+
+
             var shipDirection = ShipDirection.Oben;
             if (shipDirectionRandom == 0)
             {
@@ -170,8 +173,7 @@ namespace SchiffeVersenken_neu.Logik
             TrySetShip(shipSizeRandom, shipDirection, rowRandom, columnRandom);
             bool ShipIsSet = false;
             while (ShipIsSet == false)
-            {                
-
+            {
                 try
                 {
                     TrySetShip(shipSizeRandom, shipDirection, rowRandom, columnRandom);
@@ -190,7 +192,7 @@ namespace SchiffeVersenken_neu.Logik
             var ret = false;
             var coordinate = ConvertShipToCoords(row, column);
 
-            if (!KoordinatenAusserhalb(coordinate, shipSize, direction) && !KoordinatenBesetzt(coordinate, shipSize, direction))
+            if (!LiegenKoordinatenAusserhalb(coordinate, shipSize, direction) && !SindKoordinatenBesetzt(coordinate, shipSize, direction))
             {
                 if (Ship.GetShips().Count <= 3)
                 {
@@ -211,71 +213,67 @@ namespace SchiffeVersenken_neu.Logik
             return coordinates;
         }
 
-        private bool KoordinatenAusserhalb(Coordinates coordinate, int shipSize, ShipDirection direction)
-        {            
-            int xStart = 0, xEnd = felder.GetLength(0), yStart = 0, yEnd = felder.GetLength(1);
-            
-            bool outerBound = false;
-            
-            if (direction == ShipDirection.Oben)
+        private bool LiegenKoordinatenAusserhalb(Coordinates coordinate, int shipSize, ShipDirection direction)
+        {
+            bool outerBound;
+
+            switch (direction)
             {
-                xStart = xStart + (shipSize - 1);
-            }
-            else if (direction == ShipDirection.Unten)
-            {
-                xEnd = xEnd - (shipSize - 1);
-            }
-            else if (direction == ShipDirection.Rechts)
-            {
-                yEnd = yEnd - (shipSize - 1);
-            }
-            else if (direction == ShipDirection.Links)
-            {
-                yStart = yStart + (shipSize - 1);
-            }
-            if (!(coordinate.XCoordinate >= xStart && coordinate.XCoordinate <= xEnd && coordinate.YCoordinate >= yStart && coordinate.YCoordinate <= yEnd))
-            {
-                outerBound = true;
+                case ShipDirection.Oben:
+                    outerBound = (coordinate.XCoordinate + shipSize) < 0;
+                    break;
+                case ShipDirection.Unten:
+                    outerBound = (coordinate.XCoordinate - shipSize) > felder.GetLength(0);
+                    break;
+                case ShipDirection.Rechts:
+                    outerBound = (coordinate.YCoordinate + shipSize) > felder.GetLength(1);
+                    break;
+                case ShipDirection.Links:
+                    outerBound = (coordinate.YCoordinate - shipSize) < 0;
+                    break;
+                default:
+                    throw new NotImplementedException($"Die Richtung {nameof(direction)} wurde noch nicht implementiert");                    
+            }            
+
+            if (outerBound)
+            {                
                 MessageBox.Show("Koordinate liegt außerhalb des Feldes");
             }
+
             return outerBound;
         }
 
-        private bool KoordinatenBesetzt(Coordinates coordinates, int shipSize, ShipDirection direction)
+        private bool SindKoordinatenBesetzt(Coordinates coordinates, int shipSize, ShipDirection direction)
         {
             int counter = 0;
-            var besetzt = false;
-            //return felder[coordinates.XCoordinate, coordinates.YCoordinate].ShipIsSet;
-            while (!besetzt && counter < shipSize)
+            var sindBesetzt = false;
+            
+            while (!sindBesetzt && counter < shipSize)
             {                
                 if (direction == ShipDirection.Links)
                 {
-                    besetzt = felder[coordinates.XCoordinate, coordinates.YCoordinate - counter].ShipIsSet;
+                    sindBesetzt = felder[coordinates.XCoordinate, coordinates.YCoordinate - counter].ShipIsSet;
                 }
                 else if (direction == ShipDirection.Rechts)
                 {
-                    besetzt = felder[coordinates.XCoordinate, coordinates.YCoordinate + counter].ShipIsSet;
+                    sindBesetzt = felder[coordinates.XCoordinate, coordinates.YCoordinate + counter].ShipIsSet;
                 }
                 else if (direction == ShipDirection.Oben)
                 {
-                    besetzt = felder[coordinates.XCoordinate - counter, coordinates.YCoordinate].ShipIsSet;
+                    sindBesetzt = felder[coordinates.XCoordinate - counter, coordinates.YCoordinate].ShipIsSet;
                 }
                 else if (direction == ShipDirection.Unten)
                 {
-                    besetzt = felder[coordinates.XCoordinate + counter, coordinates.YCoordinate].ShipIsSet;
+                    sindBesetzt = felder[coordinates.XCoordinate + counter, coordinates.YCoordinate].ShipIsSet;
                 }
                 counter++;
             }
-            return besetzt;
+
+            return sindBesetzt;
         }
 
         public void PlaceShipsInGrid(int shipSize, ShipDirection direction, int Row, int Column)
-        {
-            var coordinate = ConvertShipToCoords(Row, Column);
-            if (shipSize <= 1 && KoordinatenAusserhalb(coordinate, shipSize, direction))
-            {
-                return;
-            }
+        {            
             while (shipSize >= 1)                
             {
                 felder[Row, Column].ShipIsSet = true;
